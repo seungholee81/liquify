@@ -1,9 +1,11 @@
 package com.refactify;
 
 import com.refactify.arguments.ConversionArguments;
+import com.refactify.arguments.ConversionArguments.ConversionType;
 import com.refactify.arguments.ConversionArgumentsParser;
 import com.refactify.arguments.TargetFileNameBuilder;
 import com.refactify.printer.UsagePrinter;
+import java.io.File;
 import liquibase.changelog.ChangeLogParameters;
 import liquibase.changelog.ChangeSet;
 import liquibase.changelog.DatabaseChangeLog;
@@ -29,7 +31,12 @@ public class Liquify {
     private final static TargetFileNameBuilder targetFileNameBuilder = new TargetFileNameBuilder();
 
     public static void main(final String[] args) {
-        ConversionArguments conversionArguments = parser.parseArguments(args);
+//        ConversionArguments conversionArguments = parser.parseArguments(args);
+        ConversionArguments conversionArguments = new ConversionArguments();
+        conversionArguments.setConversionType(ConversionType.SQL);
+        conversionArguments.setDatabase("mysql");
+//        conversionArguments.setSource("./src/main/resources/db/changelog/liquify_migration_to_query.xml");
+        conversionArguments.setSource("WEB-INF/classes/liquify_migration_to_query.xml");
         if(conversionArguments.areValid()) {
             convertDatabaseChangeLog(conversionArguments);
         }
@@ -41,7 +48,8 @@ public class Liquify {
     private static void convertDatabaseChangeLog(final ConversionArguments conversionArguments) {
         String targetFileName = targetFileNameBuilder.buildFilename(conversionArguments);
         try {
-            ResourceAccessor resourceAccessor = new FileSystemResourceAccessor(System.getProperty("user.dir"));
+            ResourceAccessor resourceAccessor = new FileSystemResourceAccessor(new File(System.getProperty("user.dir")));
+//            ResourceAccessor resourceAccessor = new FileSystemResourceAccessor(new File(conversionArguments.getSource()));
             ChangeLogParser parser = ChangeLogParserFactory.getInstance().getParser(conversionArguments.getSource(), resourceAccessor);
             DatabaseChangeLog changeLog = parser.parse(conversionArguments.getSource(), new ChangeLogParameters(), resourceAccessor);
             ChangeLogSerializer serializer = ChangeLogSerializerFactory.getInstance().getSerializer(targetFileName);
@@ -62,6 +70,9 @@ public class Liquify {
             logger.info("Database generator for type '{}}' was not found.",
                     conversionArguments.getDatabase());
             deleteTargetFile(targetFileName);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
         }
     }
 
