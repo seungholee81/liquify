@@ -14,18 +14,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="jongsun.park-220629-1" author="jongsun.park" context="!prod">
-        <comment>drop proof_of_delivery_id in trip_stops</comment>
-
-        <dropColumn tableName="trip_stops" columnName="proof_of_delivery_id"/>
-
-        <rollback>
-            <addColumn tableName="trip_stops">
-                <column name="proof_of_delivery_id" type="BIGINT" remarks="배송완료이미지 ID"/>
-            </addColumn>
-        </rollback>
-    </changeSet>
-
-    <changeSet id="jongsun.park-220629-1" author="jongsun.park" context="!prod">
         <comment>add trip_stops_id in proof_of_deliveries</comment>
 
         <addColumn tableName="proof_of_deliveries">
@@ -36,66 +24,5 @@
             <dropColumn tableName="proof_of_deliveries" columnName="trip_stops_id"/>
         </rollback>
     </changeSet>
-
-    <changeSet id="jongsun.park-220629-2" author="jongsun.park" context="!(prod or test)">
-        <comment>createIndex IDX_TRIP_STOPS_ID in proof_of_deliveries</comment>
-
-        <createIndex tableName="proof_of_deliveries" indexName="IDX_TRIP_STOPS_ID">
-            <column name="trip_stops_id"/>
-        </createIndex>
-
-        <rollback>
-            <dropIndex tableName="proof_of_deliveries" indexName="IDX_TRIP_STOPS_ID"/>
-        </rollback>
-    </changeSet>
-
-    <changeSet id="jongsun.park-220629-3" author="jongsun.park" context="!(prod or test)">
-        <comment>createIndex IDX_EXTERNAL_ID in proof_of_deliveries</comment>
-
-        <createIndex tableName="proof_of_deliveries" indexName="IDX_EXTERNAL_ID">
-            <column name="external_id"/>
-        </createIndex>
-
-        <rollback>
-            <dropIndex tableName="proof_of_deliveries" indexName="IDX_EXTERNAL_ID"/>
-        </rollback>
-    </changeSet>
-
-    <changeSet id="jongsun.park-220706-1" author="jongsun.park" context="!prod">
-        <comment>drop external_id in proof_of_deliveries</comment>
-
-        <dropColumn tableName="proof_of_deliveries" columnName="external_id"/>
-
-        <rollback>
-            <addColumn tableName="proof_of_deliveries">
-                <column name="external_id" type="VARCHAR(45)" remarks="외부 ID"/>
-            </addColumn>
-        </rollback>
-    </changeSet>
-
-    <changeSet id="jongsun.park-220706-2" author="jongsun.park" context="!prod">
-        <comment>add external_id in proof_of_deliveries</comment>
-
-        <addColumn tableName="proof_of_deliveries">
-            <column name="external_id" type="VARCHAR(45)" remarks="외부 ID" afterColumn="id"/>
-        </addColumn>
-
-        <rollback>
-            <dropColumn tableName="proof_of_deliveries" columnName="external_id"/>
-        </rollback>
-    </changeSet>
-
-    <changeSet id="jongsun.park-220706-3" author="jongsun.park" context="!(prod or test)">
-        <comment>createIndex IDX_EXTERNAL_ID in proof_of_deliveries</comment>
-
-        <createIndex tableName="proof_of_deliveries" indexName="IDX_EXTERNAL_ID">
-            <column name="external_id"/>
-        </createIndex>
-
-        <rollback>
-            <dropIndex tableName="proof_of_deliveries" indexName="IDX_EXTERNAL_ID"/>
-        </rollback>
-    </changeSet>
-
 
 </databaseChangeLog>
